@@ -24,3 +24,10 @@ class QuizModel:
             self.score += 1
             return True
         return False
+
+
+import json
+def load_questions(self, json_file):
+    """Loads questions from a JSON file"""
+    with open(json_file, "r", encoding="utf-8") as file:
+        return json.load(file)
