@@ -9,12 +9,14 @@ class QuizController:
         self.view = view
 
         # Connexions boutons
-        self.view.next_button.clicked.connect(self.next_question)
-        self.view.prev_button.clicked.connect(self.prev_question)
+        self.view.quiz_view.next_button.clicked.connect(self.next_question)
+        self.view.quiz_view.prev_button.clicked.connect(self.prev_question)
 
         # Initialisation interface
-        self.view.progress_bar.setMaximum(len(self.model.questions))
-        self.view.prev_button.setEnabled(False)
+        self.view.quiz_view.progress_bar.setMaximum(len(self.model.questions))
+        self.view.quiz_view.prev_button.setEnabled(False)
+        self.view.start_view.start_button.clicked.connect(self.start_quiz)
+        self.view.result_view.restart_button.clicked.connect(self.restart)
 
     def start(self):
         self.update_view()
@@ -23,28 +25,28 @@ class QuizController:
         current = self.model.get_current_question()
 
         # Mettre à jour question + réponses
-        self.view.update_question(current["question"], current["answers"])
+        self.view.quiz_view.update_question(current["question"], current["answers"])
 
         # Progression
-        self.view.progress_bar.setValue(self.model.current_index + 1)
+        self.view.quiz_view.progress_bar.setValue(self.model.current_index + 1)
 
         # Score
-        self.view.update_score(self.model.score)
+        self.view.quiz_view.update_score(self.model.score)
 
         # Bouton précédent
-        self.view.prev_button.setEnabled(self.model.current_index > 0)
+        self.view.quiz_view.prev_button.setEnabled(self.model.current_index > 0)
 
         # Texte bouton suivant
         if self.model.current_index < len(self.model.questions) - 1:
-            self.view.next_button.setText("Suivant")
+            self.view.quiz_view.next_button.setText("Suivant")
         else:
-            self.view.next_button.setText("Terminer")
+            self.view.quiz_view.next_button.setText("Terminer")
 
     def next_question(self):
-        selected = self.view.get_selected_answer()
+        selected = self.view.quiz_view.get_selected_answer()
         if selected is None:
             QMessageBox.information(
-                self.view,
+                self.view.quiz_view,
                 "Réponse",
                 "Choisis une réponse avant de continuer."
             )
@@ -61,13 +63,13 @@ class QuizController:
             self.update_view()
         else:
             QMessageBox.information(
-                self.view,
+                self.view.quiz_view,
                 "Quiz terminé",
                 f"Score final : {self.model.score} / {len(self.model.questions)}"
             )
-            self.view.update_score(self.model.score)
-            self.view.next_button.setEnabled(False)
-            self.view.prev_button.setEnabled(True)
+            self.view.quiz_view.update_score(self.model.score)
+            self.view.quiz_view.next_button.setEnabled(False)
+            self.view.quiz_view.prev_button.setEnabled(True)
 
     def prev_question(self):
         if self.model.current_index > 0:
@@ -76,8 +78,8 @@ class QuizController:
 
             # Griser les réponses si la question a déjà été validée
             if self.model.current_index in self.model.answered_questions:
-                for rb in self.view.radio_buttons:
+                for rb in self.view.quiz_view.radio_buttons:
                     rb.setEnabled(False)
             else:
-                for rb in self.view.radio_buttons:
+                for rb in self.view.quiz_view.radio_buttons:
                     rb.setEnabled(True)
