@@ -1,42 +1,51 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Feb  6 16:01:25 2026
+
+@author: samahbouzidi
+"""
+
 import sys
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication
-
-from View.quiz_view import QuizView
-from Model.quiz_model import QuizModel
-from Controller.quiz_controller import QuizController
-
-
-# app = QApplication(sys.argv)
-# app.setWindowIcon(QIcon("Resources/quizicon.png"))
-# app.setStyle("Fusion")   # utile pour la progress bar, surtout sur Mac
-
-# model = QuizModel()
-# view = QuizView()
-# controller = QuizController(model, view)
-
-# view.show()
-# controller.start()
-
-# sys.exit(app.exec_())
-from PyQt5.QtWidgets import QWidget, QStackedWidget,QVBoxLayout
+# Classe principale pour l'application PyQt5
+from PyQt5.QtWidgets import QApplication,QStackedWidget,QVBoxLayout,QWidget
+# Import de la fenêtre principale de l'application
 from View.start_view import StartView
 from View.quiz_view import QuizView
 from View.result_view import ResultView
+
+from Controller.quiz_controller import QuizController
+from Model.quiz_model import QuizModel
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.stack = QStackedWidget()
+        
         self.start_view = StartView()
         self.quiz_view = QuizView()
         self.result_view = ResultView()
+        
         self.stack.setStyleSheet("background-color: lightblue;")
         self.start_view.setStyleSheet("background-color: lightblue")
-        self.result_view.setStyleSheet("background-color: lightblue") 
+        self.result_view.setStyleSheet("background-color: lightblue")
+        
         self.stack.addWidget(self.start_view)
         self.stack.addWidget(self.quiz_view)
         self.stack.addWidget(self.result_view)
-        # Créer un layout vertical pour contenir le QStackedWidget
+        
         layout = QVBoxLayout()
         layout.addWidget(self.stack)
         self.setLayout(layout)
+        
+        
+
+
+
+app = QApplication(sys.argv)  # Crée l'application
+app.setStyle("Fusion")
+window = MainWindow() # Crée la fenêtre
+model=QuizModel()
+controller=QuizController(model, window)
+window.show()  # Affiche la fenêtre
+sys.exit(app.exec_())  # Lance la boucle de l'application et quitte proprement
